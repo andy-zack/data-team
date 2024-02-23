@@ -1,18 +1,19 @@
-library(DBI)
+library(shiny)
 library(RSQLite)
 library(httr)
 library(jsonlite)
-library(here) 
+library(here)
+library(DT)
 
 server <- function(input, output, session) {
-  cat("\n")
-  cat("got input...")
-  
-  source(here::here("code", "api_helpers.R"))
+
+  source(here::here("api_helpers.R"))
   assistant_id <- "asst_xWnXfPj1aNLlCXF1nZXAAd7p" # Replace with your assistant's ID
-
+  cat("got source code...")
+  
   observeEvent(input$submit, {
-
+    
+    cat("got input...")
     # Test if API call can be made
     thread_id <- start_thread_with_question(input$question)
     cat("started thread...")
@@ -28,7 +29,7 @@ server <- function(input, output, session) {
       cat("extracted sql...")
       
       # Connect to database
-      con <- dbConnect(SQLite(), dbname = here("data-team-beta", "my_database.sqlite"))
+      con <- dbConnect(SQLite(), dbname = here("my_database.sqlite"))
       
       # Execute the SQL query and fetch results
       result <- dbGetQuery(con, sql_query)
