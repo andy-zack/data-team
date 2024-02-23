@@ -3,9 +3,24 @@ library(httr)
 library(jsonlite)
 library(RSQLite)
 library(DBI)
+library(config)
 
-# Set OpenAI API key and headers globally
-api_key <- Sys.getenv("OPENAI_API_KEY")
+cat("loaded packages...")
+
+# Set OpenAI API key and headers globally. This has to be weird so that it pulls from the Renviron file first, but then checks the config file otherwise.
+api_key <- tryCatch({
+  key <- Sys.getenv("OPENAI_API_KEY")
+  if (key == "") stop("API key not set")
+  key
+}, error = function(e) {
+  # If an error occurs or the key is not set, this block will execute
+  config <- config::get()
+  config$OPENAI_API_KEY
+})
+
+
+cat("got api key...")
+
 global_headers <- c(
   `Content-Type` = "application/json",
   `Authorization` = paste("Bearer", api_key),
