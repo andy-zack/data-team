@@ -29,7 +29,7 @@ server <- function(input, output, session) {
       cat("extracted sql...")
       
       # Connect to database
-      con <- dbConnect(SQLite(), dbname = here("my_database.sqlite"))
+      con <- dbConnect(SQLite(), dbname = here("Chinook_Sqlite.sqlite"))
       
       # Execute the SQL query and fetch results
       result <- dbGetQuery(con, sql_query)
