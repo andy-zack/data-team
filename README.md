@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Shiny application integrates OpenAI's API for transforming natural language questions into SQL queries against a SQLite database with `nycflights13` data. It demonstrates the blend of natural language processing and data analysis, offering an intuitive querying and visualization interface. The application comprises API communication (`api_helpers.R`), server logic (`server.R`), and user interface (`ui.R`), enabling users to explore data through natural language.
+This Shiny application integrates OpenAI's API for transforming natural language questions into SQL queries against a SQLite database with [chinook](https://github.com/lerocha/chinook-database/tree/master) data (CRM from a fictional music store). It demonstrates the blend of natural language processing and data analysis, offering an intuitive querying and visualization interface. The application comprises API communication (`api_helpers.R`), server logic (`server.R`), and user interface (`ui.R`), enabling users to explore data through natural language.
 
 ## Requirements
 
@@ -33,4 +33,5 @@ default:
 - `api_helpers.R`: Manages API requests.
 - `server.R`: Handles server-side logic.
 - `ui.R`: Defines the UI.
-- `my_database.sqlite`: Contains nycflights13 dataset.
+- `Chinook_Sqlite.sqlite`: Contains the chinook music store dataset.
+- `my_database.sqlite`: Contains nycflights13 dataset. (not currently in use)
