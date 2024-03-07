@@ -57,38 +57,6 @@ execute_sql_query <- function(sql_query, db_connection) {
 }
 
 # Function to check a thread for responses
-old_poll_for_response <- function(thread_id, interval = 5, max_attempts = 5) {
-  attempt <- 1
-  repeat {
-    Sys.sleep(interval)
-    cat("Checking for message...\n")
-    messages <- perform_get_request(paste0("https://api.openai.com/v1/threads/", thread_id, "/messages"))
-    
-    # Check for assistant's message
-    has_response <- FALSE
-    for (message in messages$data) {
-      if (message$role == "assistant" && 
-          !is.null(message$content) && 
-          length(message$content) >= 1 && 
-          !is.null(message$content[[1]]$text) &&
-          !is.null(message$content[[1]]$text$value)) {
-        has_response <- TRUE
-        break
-      }
-    }
-    
-    if (has_response) {
-      break
-    }
-    
-    if (attempt >= max_attempts) {
-      stop("Max attempts reached without receiving a complete response from the assistant.")
-    }
-    
-    attempt <- attempt + 1
-  }
-  messages
-}
 poll_for_response <- function(run_id, thread_id, interval = 5, max_attempts = 5) {
   for(attempt in 1:max_attempts) {
     Sys.sleep(interval)
