@@ -119,6 +119,19 @@ start_thread_with_question <- function(question) {
         content = question
       )
     )
-  ))
+  )
+  )
   thread_response$id
+}
+
+add_message_to_thread <- function(thread_id, question) {
+  message_response <- perform_post_request(paste0("https://api.openai.com/v1/threads/", 
+                                                  thread_id, 
+                                                  "/messages"), 
+                                           body = list(
+                                             role = "user",
+                                             content = question
+                                           )
+                                           )
+  return(message_response)
 }
