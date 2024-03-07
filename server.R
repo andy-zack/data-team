@@ -4,6 +4,7 @@ library(httr)
 library(jsonlite)
 library(here)
 library(DT)
+library(ggplot2)
 
 server <- function(input, output, session) {
 
@@ -16,7 +17,7 @@ server <- function(input, output, session) {
     cat("got input...")
     # Test if API call can be made
     thread_id <- start_thread_with_question(input$question)
-    cat("started thread...")
+    cat(paste0("started thread (", thread_id, ")..."))
     run_id <- create_run_for_thread(assistant_id, thread_id)
     cat("started run...")
     messages <- poll_for_response(run_id, thread_id)
@@ -70,15 +71,27 @@ server <- function(input, output, session) {
     
     cat("got graph input...")
     # add new message to existing thread
-    add_message_to_thread(input$question, thread_id)
+    add_message_to_thread(thread_id, input$graph_question)
     cat("added message to thread...")
     run_id <- create_run_for_thread(assistant_id, thread_id)
     cat("started run...")
     messages <- poll_for_response(run_id, thread_id)
     cat("got messages...")
-    # extract_r_code_from_messages() needs to be created too
-    r_code <- extract_r_code_from_messages(messages)
+    # get most recent message
+    message <- get_most_recent_assistant_text(messages)
+    cat(message)
+    cat("got most recent...")
+    # extract the R code
+    r_code <- extract_r_from_message(message)
+    cat("got r code...")
+    cat(r_code)
     plot_expr <- parse(text = paste("disp_plot <-", r_code))
+    cat("parsed r code")
     eval(plot_expr)
+    cat("evaluated r code...")
+    #output plot
+    output$plotOutput <- renderPlot({
+      disp_plot
+    })
   })
 }
