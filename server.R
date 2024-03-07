@@ -17,9 +17,9 @@ server <- function(input, output, session) {
     # Test if API call can be made
     thread_id <- start_thread_with_question(input$question)
     cat("started thread...")
-    create_run_for_thread(assistant_id, thread_id)
+    run_id <- create_run_for_thread(assistant_id, thread_id)
     cat("started run...")
-    messages <- poll_for_response(thread_id)
+    messages <- poll_for_response(run_id, thread_id)
     cat("got messages...")
     
     if (!startsWith(messages$data[[1]]$content[[1]]$text$value, "ERROR:")) {
@@ -65,5 +65,21 @@ server <- function(input, output, session) {
       input$question
     })
     
+  })
+  observeEvent(input$submit_graph, {
+    
+    cat("got graph input...")
+    # the add_message_to_thread function does not exist, needs to be added to api_helpers.R
+    #add_message_to_thread(input$question, thread$id)
+    cat("started thread...")
+    create_run_for_thread(assistant_id, thread_id)
+    cat("started run...")
+    # poll_for_response might need to be adjusted to check if most recent response is from assistant
+    messages <- poll_for_response(thread_id)
+    cat("got messages...")
+    # extract_r_code_from_messages() needs to be created too
+    r_code <- extract_r_code_from_messages(messages)
+    plot_expr <- parse(text = paste("disp_plot <-", r_code))
+    eval(plot_expr)
   })
 }
