@@ -111,6 +111,12 @@ extract_sql_query_from_messages <- function(messages) {
   }
 }
 
+extract_r_from_message <- function(message) {
+  r_code <- gsub("^```r|```$", "", message)
+  r_code <- trimws(r_code)
+  return(r_code)
+}
+
 start_thread_with_question <- function(question) {
   thread_response <- perform_post_request("https://api.openai.com/v1/threads", list(
     messages = list(
@@ -134,4 +140,29 @@ add_message_to_thread <- function(thread_id, question) {
                                            )
                                            )
   return(message_response)
+}
+
+get_most_recent_assistant_text <- function(message_object) {
+  # Initialize variables to keep track of the most recent message details
+  latest_timestamp <- -Inf
+  latest_message_text <- ""
+  
+  # Loop through each message in the data list
+  for (message in message_object$data) {
+    # Check if the message is from the assistant
+    if (message$role == "assistant" && message$created_at > latest_timestamp) {
+      # Update the latest timestamp and message text if this message is more recent
+      latest_timestamp <- message$created_at
+      if (length(message$content) > 0 && !is.null(message$content[[1]]$text$value)) {
+        latest_message_text <- message$content[[1]]$text$value
+      }
+    }
+  }
+  
+  # Return the most recent message text, or NULL if none found
+  if (latest_timestamp == -Inf) {
+    return(NULL)
+  } else {
+    return(latest_message_text)
+  }
 }
