@@ -6,12 +6,18 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       textInput("question", "Enter your question:"),
-      actionButton("submit", "Submit")
+      actionButton("submit", "Submit Question"),
+      br(),
+      br(),
+      br(),
+      textInput("graph_question", "\nDescribe how to graph it:"),
+      actionButton("submit_graph", "Submit Graph")
     ),
     mainPanel(
       verbatimTextOutput("questionOutput"),
       verbatimTextOutput("sqlOutput"),
-      DT::dataTableOutput("resultOutput")
+      DT::dataTableOutput("resultOutput"),
+      plotOutput("plotOutput")
     )
   )
 )
