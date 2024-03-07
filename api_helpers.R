@@ -56,7 +56,8 @@ execute_sql_query <- function(sql_query, db_connection) {
   result
 }
 
-poll_for_response <- function(thread_id, interval = 5, max_attempts = 5) {
+# Function to check a thread for responses
+old_poll_for_response <- function(thread_id, interval = 5, max_attempts = 5) {
   attempt <- 1
   repeat {
     Sys.sleep(interval)
@@ -88,14 +89,36 @@ poll_for_response <- function(thread_id, interval = 5, max_attempts = 5) {
   }
   messages
 }
+poll_for_response <- function(run_id, thread_id, interval = 5, max_attempts = 5) {
+  for(attempt in 1:max_attempts) {
+    Sys.sleep(interval)
+    cat("Checking if run is complete...\n")
+    run_reply <- perform_get_request(paste0("https://api.openai.com/v1/threads/", 
+                                             thread_id, 
+                                             "/runs/", 
+                                             run_id))
+    run_status <- run_reply$status
+    cat(run_status)
+    # Check for run to be complete
+    if (run_status == "completed") {
+      messages <- perform_get_request(paste0("https://api.openai.com/v1/threads/", thread_id, "/messages"))
+      break
+    } else if (attempt == max_attempts) {
+      stop("Max attempts reached without receiving a complete response from the assistant.")
+    }
+  }
+  return(messages)
 
+}
 
 # Function to create a run for the assistant to process the thread
 create_run_for_thread <- function(assistant_id, thread_id) {
   create_run_body <- list(
     assistant_id = assistant_id
   )
-  perform_post_request(paste0("https://api.openai.com/v1/threads/", thread_id, "/runs"), create_run_body)
+  create_run_reply <- perform_post_request(paste0("https://api.openai.com/v1/threads/", thread_id, "/runs"), create_run_body)
+  run_id <- create_run_reply$id
+  return(run_id)
 }
 
 # Function to extract SQL query from assistant's response
