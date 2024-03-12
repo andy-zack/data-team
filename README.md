@@ -23,6 +23,8 @@ default:
   OPENAI_API_KEY: "your_api_key_here"
 ```
 
+It is also necessary to set up an Assistant on your account with the proper instructions (not included in this repo), and pass that assistant's ID into the code in `server.R`.
+
 ## Usage
 
 1. Open data_team.Rproj in RStudio.
