@@ -10,13 +10,17 @@ server <- function(input, output, session) {
 
   source(here::here("api_helpers.R"))
   assistant_id <- "asst_xWnXfPj1aNLlCXF1nZXAAd7p" # Replace with your assistant's ID
+  shared_vars <- reactiveValues(thread_id = NULL,
+                                result = NULL)
+
   cat("got source code...")
   
   observeEvent(input$submit, {
     
     cat("got input...")
     # Test if API call can be made
-    thread_id <- start_thread_with_question(input$question)
+    shared_vars$thread_id <- start_thread_with_question(input$question)
+    thread_id <- shared_vars$thread_id
     cat(paste0("started thread (", thread_id, ")..."))
     run_id <- create_run_for_thread(assistant_id, thread_id)
     cat("started run...")
@@ -34,6 +38,7 @@ server <- function(input, output, session) {
       
       # Execute the SQL query and fetch results
       result <- dbGetQuery(con, sql_query)
+      shared_vars$result <- result
       
       # Disconnect from the database
       dbDisconnect(con)
@@ -70,7 +75,14 @@ server <- function(input, output, session) {
   observeEvent(input$submit_graph, {
     
     cat("got graph input...")
+    
+    #get global reactive vars from earlier
+    thread_id <- shared_vars$thread_id
+    result <- shared_vars$result
+    
     # add new message to existing thread
+    cat(thread_id)
+    add_message_to_thread(thread_id, input$graph_question)
     add_message_to_thread(thread_id, input$graph_question)
     cat("added message to thread...")
     run_id <- create_run_for_thread(assistant_id, thread_id)
