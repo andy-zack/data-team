@@ -16,7 +16,7 @@ ui <- fluidPage(
     mainPanel(
       verbatimTextOutput("questionOutput"),
       verbatimTextOutput("sqlOutput"),
-      DT::dataTableOutput("resultOutput"),
+      dataTableOutput("resultOutput"),
       plotOutput("plotOutput")
     )
   )
