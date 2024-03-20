@@ -17,6 +17,9 @@ get_and_run_sql <- function(q, assistant_id, shared_vars) {
     cat("no error found...")
     sql_query <- extract_sql_query_from_messages(messages)
     cat("extracted sql...")
+    cat("\n")
+    cat(sql_query)
+    cat("\n")
     
     # Connect to database
     con <- dbConnect(SQLite(), dbname = here("Chinook_Sqlite.sqlite"))
