@@ -1,23 +1,20 @@
 library(shiny)
 library(DT)
+library(shinydashboard)
 
-ui <- fluidPage(
-  titlePanel("Data Team (beta)"),
-  sidebarLayout(
-    sidebarPanel(
-      textInput("question", "Enter your question:"),
-      actionButton("submit", "Submit Question"),
-      br(),
-      br(),
-      br(),
-      textInput("graph_question", "\nDescribe how to graph it:"),
-      actionButton("submit_graph", "Submit Graph")
-    ),
-    mainPanel(
-      verbatimTextOutput("questionOutput"),
-      verbatimTextOutput("sqlOutput"),
-      dataTableOutput("resultOutput"),
-      plotOutput("plotOutput")
-    )
+ui <- dashboardPage(
+  dashboardHeader(title = "Data Team (beta version)"),
+  dashboardSidebar(
+    textInput("question", "Enter your question:"),
+    actionButton("submit", "Submit Question"),
+    br(),
+    textInput("graph_question", "\nDescribe how to graph it:"),
+    actionButton("submit_graph", "Submit Graph")
+  ),
+  dashboardBody(
+    verbatimTextOutput("questionOutput"),
+    verbatimTextOutput("sqlOutput"),
+    dataTableOutput("resultOutput"),
+    plotOutput("plotOutput")
   )
 )
